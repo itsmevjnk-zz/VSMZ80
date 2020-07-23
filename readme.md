@@ -23,7 +23,7 @@ Any contribution to implement these features/improve existing ones is highly app
 ## Building and installing
 
 To build, just open the project on VS2015 and hit "Build". It should build with no errors.
-For 32-bit Proteus installations, you MUST compile with the Win32 configuration, otherwise Proteus will error out.
+For 32-bit Proteus installations, you MUST compile with the Win32 configuration, otherwise Proteus will error out.  
 To install the model, copy the files in the LIBRARY directory in this repo to your Proteus installation's LIBRARY directory, and copy the built VSMZ80.DLL file in the Debug/Release directory (depending on your configuration) to your Proteus installation's MODELS directory.
 
 ## Credits
