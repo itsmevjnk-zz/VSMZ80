@@ -1633,6 +1633,7 @@ VOID DsimModel::rsthandler(ABSTIME ime, DSIMMODES mode) {
 #ifdef DEBUGCALLS
 			InfoLog("CPU reset completed");
 #endif
+			reg.PC = 0;
 			z80_up = 1; // lets the CPU run again
 		}
 	}
