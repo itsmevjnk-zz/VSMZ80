@@ -344,6 +344,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 					cycle = WRITE;
 					hold_state = 0;
 					Addr = reg.HL;
+#ifdef DEBUGCALLS
+					sprintf_s(LogMessage, "        (0x%04x)=0x%02x", Addr, Data);
+					InfoLog(LogMessage);
+#endif
 					done++;
 					instr_pre = 0;
 					break;
@@ -352,6 +356,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 			else {
 				rot(instr_y, tab_r[instr_z]);
 				done++;
+#ifdef DEBUGCALLS
+				sprintf_s(LogMessage, "        %s=0x%02x", disp_r[instr_z], *tab_r[instr_z]);
+				InfoLog(LogMessage);
+#endif
 				instr_pre = 0;
 			}
 			break;
@@ -364,6 +372,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 					break;
 				case 2:
 					bit(instr_y, &Data);
+#ifdef DEBUGCALLS
+					sprintf_s(LogMessage, "        (0x%04x)=0x%02x", Addr, Data);
+					InfoLog(LogMessage);
+#endif
 					done++;
 					instr_pre = 0;
 					break;
@@ -372,6 +384,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 			else {
 				bit(instr_y, tab_r[instr_z]);
 				done++;
+#ifdef DEBUGCALLS
+				sprintf_s(LogMessage, "        %s=0x%02x", disp_r[instr_z], *tab_r[instr_z]);
+				InfoLog(LogMessage);
+#endif
 				instr_pre = 0;
 			}
 			break;
@@ -391,6 +407,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 					cycle = WRITE;
 					hold_state = 0;
 					Addr = reg.HL;
+#ifdef DEBUGCALLS
+					sprintf_s(LogMessage, "        (0x%04x)=0x%02x", Addr, Data);
+					InfoLog(LogMessage);
+#endif
 					done++;
 					instr_pre = 0;
 					break;
@@ -399,6 +419,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 			else {
 				*tab_r[instr_z] &= ~(1 << instr_y);
 				done++;
+#ifdef DEBUGCALLS
+				sprintf_s(LogMessage, "        %s=0x%02x", disp_r[instr_z], *tab_r[instr_z]);
+				InfoLog(LogMessage);
+#endif
 				instr_pre = 0;
 			}
 			break;
@@ -418,6 +442,10 @@ void DsimModel::Execute(void) {								// Executes an instruction
 					cycle = WRITE;
 					hold_state = 0;
 					Addr = reg.HL;
+#ifdef DEBUGCALLS
+					sprintf_s(LogMessage, "        (0x%04x)=0x%02x", Addr, Data);
+					InfoLog(LogMessage);
+#endif
 					done++;
 					instr_pre = 0;
 					break;
@@ -426,7 +454,55 @@ void DsimModel::Execute(void) {								// Executes an instruction
 			else {
 				*tab_r[instr_z] |= (1 << instr_y);
 				done++;
+#ifdef DEBUGCALLS
+				sprintf_s(LogMessage, "        %s=0x%02x", disp_r[instr_z], *tab_r[instr_z]);
+				InfoLog(LogMessage);
+#endif
 				instr_pre = 0;
+			}
+			break;
+		}
+		break;
+	case 0xED: // ED prefixed
+		switch (instr_x) {
+		case 1:
+			switch (instr_z) {
+			case 0: // IN r[y], (C) / IN (C) 
+				switch (step++) {
+				case 1:
+					cycle = IOREAD;
+					Addr = reg.C;
+					break;
+				case 2:
+					if (instr_y != 6) *tab_r[instr_y] = Data;
+#ifdef DEBUGCALLS
+					sprintf_s(LogMessage, "        IO (0x%02x)=0x%02x", reg.C, Data);
+					InfoLog(LogMessage);
+#endif
+					opflags(Data, 0, 0, 1, 0, 1, 1, 1);
+					reg.F &= ~(1 << FLG_N);
+					done++;
+					instr_pre = 0;
+					break;
+				}
+				break;
+			case 1: // OUT (C), r[y]/0
+				switch (step++) {
+				case 1:
+					cycle = IOWRITE;
+					Addr = reg.C;
+					Data = (instr_y == 6) ? 0 : *tab_r[instr_y];
+					break;
+				case 2:
+#ifdef DEBUGCALLS
+					sprintf_s(LogMessage, "        IO (0x%02x)=0x%02x", reg.C, Data);
+					InfoLog(LogMessage);
+#endif
+					done++;
+					instr_pre = 0;
+					break;
+				}
+				break;
 			}
 			break;
 		}
@@ -1743,6 +1819,7 @@ VOID DsimModel::clockstep(ABSTIME time, DSIMMODES mode) {
 				sprintf_s(LogMessage, "      -> 0x%02x...", Data);
 				InfoLog(LogMessage);
 #endif
+				break;
 			case T4n:
 				pin_IORQ->SetHigh;
 				pin_RD->SetHigh;

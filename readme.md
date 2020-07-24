@@ -7,8 +7,9 @@ This was originally created by MockbaTheBorg in 2016, and work on it is now cont
 ## Functionality
 
 Right now, the model supports:
-- Most of the unprefixed opcode set
+- Unprefixed opcode set (partial)
 - CB prefixed opcode set
+- ED prefixed opcode set (partial)
 - CPU reset
 - Memory and I/O read/write
 - Flags

@@ -4,7 +4,7 @@
 
 #define InfoLog(__s__) sprintf_s(LogLineT, "%05d: ", LogLine++); myPopup->print(LogLineT); myPopup->print(__s__); myPopup->print("\n")
 
-//#define DEBUGCALLS
+#define DEBUGCALLS
 
 #define SetHigh setstate(time, 1, SHI)
 #define SetLow setstate(time, 1, SLO)
